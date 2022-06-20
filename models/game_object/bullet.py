@@ -18,5 +18,3 @@ class Bullet(GameObject):
             self.x -= self.__speed
         if self.__direction == 'right':
             self.x += self.__speed
-
-

@@ -61,6 +61,13 @@ class Game:
                 for bullet in bullets:
                     bullet.shoot()
                     screen.blit(bullet.image, (bullet.x + player_box.centerx, bullet.y + player_box.centery))
+                    # print(f"bound of screen height {screen.get_height()} , width {screen.get_width()}")
+                    # print(f"bullet y {bullet.y}, x {bullet.x}")
+                    if bullet.y < -100 or bullet.y > height or bullet.x < -100 or bullet.x > width:
+                        print("OUT OF BOUNDS")
+                        bullets.remove(bullet)
+                    else:
+                        print("INSIDE BOUNDS")
                     # bullet.y
                     # bullet.x
                     # detect when the bullets are outside the window and remove from array or delete instance
