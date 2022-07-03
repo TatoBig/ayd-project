@@ -1,7 +1,13 @@
+from time import sleep
+
 import pygame
+import threading
 from .game_object import Bullet, Player
+from .game_object.enemy import Enemy
 
 import sys
+
+
 
 
 class Game:
@@ -19,10 +25,15 @@ class Game:
         player = Player(400, 300)
 
         bullets: list[Bullet] = []
+        enemies: list[Enemy] = []
 
         # Needs to be moved
         cooldown = True
         direction = 'down'
+        enemy = Enemy(100, 100, 20, player, 20)
+        enemy2 = Enemy(500, 550, 40, player, 80)
+        enemies.append(enemy)
+        enemies.append(enemy2)
 
         run: bool = True
         while run:
@@ -33,18 +44,16 @@ class Game:
 
             keys = pygame.key.get_pressed()
 
-            player_box = player.image.get_rect()
-
             if keys[pygame.K_UP] and player.y > 0:
                 player.move_up()
                 direction = 'up'
-            if keys[pygame.K_DOWN] and player.y < height - player_box.bottom:
+            if keys[pygame.K_DOWN] and player.y < height - player.hitbox.bottom:
                 player.move_down()
                 direction = 'down'
             if keys[pygame.K_LEFT] and player.x > 0:
                 player.move_left()
                 direction = 'left'
-            if keys[pygame.K_RIGHT] and player.x < width - player_box.right:
+            if keys[pygame.K_RIGHT] and player.x < width - player.hitbox.right:
                 player.move_right()
                 direction = 'right'
             if keys[pygame.K_SPACE]:
@@ -57,21 +66,32 @@ class Game:
             cooldown += 1
 
             screen.blit(player.image, (player.x, player.y))
+
+            if len(enemies) > 0:
+                for enemy in enemies:
+                    screen.blit(enemy.image, (enemy.x, enemy.y))
+                    enemy.draw_health_bar(screen)
+
+                    if enemy.current_health <= 0:
+                        enemies.remove(enemy)
+
+                    if not enemy.tracking:
+                        enemy.track()
+
             if len(bullets) > 0:
                 for bullet in bullets:
                     bullet.shoot()
-                    screen.blit(bullet.image, (bullet.x + player_box.centerx, bullet.y + player_box.centery))
-                    # print(f"bound of screen height {screen.get_height()} , width {screen.get_width()}")
-                    # print(f"bullet y {bullet.y}, x {bullet.x}")
-                    if bullet.y < -100 or bullet.y > height or bullet.x < -100 or bullet.x > width:
-                        print("OUT OF BOUNDS")
+                    screen.blit(bullet.image, (bullet.x + player.hitbox.centerx, bullet.y + player.hitbox.centery))
+                    if bullet.y < -player.hitbox.bottom or bullet.y > height or bullet.x < -player.hitbox.right or\
+                            bullet.x > width:
                         bullets.remove(bullet)
-                    else:
-                        print("INSIDE BOUNDS")
-                    # bullet.y
-                    # bullet.x
-                    # detect when the bullets are outside the window and remove from array or delete instance
-            print(len(bullets))
+
+                    for enemy in enemies:
+                        # 50?
+                        if enemy.x + enemy.hitbox.width >= bullet.x + 50 + bullet.hitbox.centerx >= enemy.x and\
+                                enemy.y + enemy.hitbox.height >= bullet.y + 50 + bullet.hitbox.centery >= enemy.y:
+                            bullets.remove(bullet)
+                            enemy.hit(1)
 
             pygame.display.flip()
 
