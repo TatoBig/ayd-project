@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 import pygame
 from pygame.rect import Rect, RectType
@@ -28,13 +28,14 @@ class GameObject:
     def hitbox(self) -> Union[Rect, RectType]:
         return self.__hitbox
 
-    @x.setter
-    def x(self, x: int):
-        self.__x = x
+    def move_up(self, movement: Optional[int] = 1):
+        self.__y -= movement
 
-    @y.setter
-    def y(self, y: int):
-        self.__y = y
+    def move_down(self, movement: Optional[int] = 1):
+        self.__y += movement
 
+    def move_left(self, movement: Optional[int] = 1):
+        self.__x -= movement
 
-
+    def move_right(self, movement: Optional[int] = 1):
+        self.__x += movement

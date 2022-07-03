@@ -1,18 +1,25 @@
 from .game_object import GameObject
+from .character import Character
+from .character import Sniper
+from .character import Robot
+from .item import Item
 
 
 class Player(GameObject):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, 'intro_ball.gif')
+        self.__character: Character = Robot()
 
-    def move_up(self):
-        self.y -= 1
+    @property
+    def character(self):
+        return self.__character
 
-    def move_down(self):
-        self.y += 1
+    @character.setter
+    def character(self, character: Character):
+        self.__character = character
 
-    def move_left(self):
-        self.x -= 1
+    def shoot(self, direction: str):
+        return self.__character.try_shoot(direction, self)
 
-    def move_right(self):
-        self.x += 1
+    def upgrade_character(self, item: Item):
+        self.__character = item.activate(self.__character)
