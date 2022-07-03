@@ -1,14 +1,16 @@
 from typing import Union
 
 import pygame
+from pygame.rect import Rect, RectType
 from pygame.surface import Surface, SurfaceType
 
 
 class GameObject:
     def __init__(self, x: int, y: int, image_name: str):
-        self.__x = x
-        self.__y = y
-        self.__image = pygame.image.load(image_name)
+        self.__x: int = x
+        self.__y: int = y
+        self.__image: Union[Surface, SurfaceType] = pygame.image.load(image_name)
+        self.__hitbox: Union[Rect, RectType] = self.__image.get_rect()
 
     @property
     def x(self) -> int:
@@ -21,6 +23,10 @@ class GameObject:
     @property
     def image(self) -> Union[Surface, SurfaceType]:
         return self.__image
+
+    @property
+    def hitbox(self) -> Union[Rect, RectType]:
+        return self.__hitbox
 
     @x.setter
     def x(self, x: int):
