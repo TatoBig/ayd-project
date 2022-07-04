@@ -7,8 +7,8 @@ import pygame
 
 class Enemy(GameObject):
 
-    def __init__(self, x: int, y: int, speed: int, player: Player, health: float):
-        super().__init__(x, y, 'enemy.png')
+    def __init__(self, x: int, y: int, image: 'str', speed: int, player: Player, health: float):
+        super().__init__(x, y, image)
         self.__health: float = health
         self.__speed: float = speed
         self.__track_player: Player = player

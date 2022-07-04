@@ -9,7 +9,7 @@ import pygame
 
 class Crazy(Enemy):
     def __init__(self, x: int, y: int, speed: int, player: Player, health: float):
-        super().__init__(x, y, speed, player, health)
+        super().__init__(x, y,  'enemy.png', speed, player, health)
 
     def _keep_tracking(self):
         while True:

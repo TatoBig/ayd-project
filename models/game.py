@@ -1,6 +1,6 @@
 import pygame
 from .game_object import Bullet, Player
-from .game_object.enemy import Enemy, Crazy
+from .game_object.enemy import Enemy, Crazy, EnemyFactory, HardEnemyFactory, NormalEnemyFactory
 from .game_object.item import Item
 
 
@@ -14,16 +14,18 @@ class Game:
         self.__width: int = 800
         self.__height: int = 600
         self.__screen = pygame.display.set_mode((self.__width, self.__height))
+        # self.__enemy_factory: EnemyFactory = HardEnemyFactory()
+        self.__enemy_factory: EnemyFactory = NormalEnemyFactory()
 
     def init_game(self):
         player = Player(400, 300)
         item = Item(250, 250)
         direction = 'down'
-        enemy = Enemy(100, 100, 20, player, 20)
-        enemy2 = Crazy(500, 550, 40, player, 80)
-        self.__screen_enemies.append(enemy)
-        self.__screen_enemies.append(enemy2)
+
         self.__screen_items.append(item)
+        self.__screen_enemies.append(self.__enemy_factory.create_normie(300, 400, player))
+        self.__screen_enemies.append(self.__enemy_factory.create_crazy(600, 200, player))
+        self.__screen_enemies.append(self.__enemy_factory.create_boss(70, 500, player))
 
         run: bool = True
         while run:
