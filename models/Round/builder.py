@@ -5,13 +5,18 @@ from abc import ABC, abstractmethod
 class Builder(ABC):
 
     @abstractmethod
-    def get_items():
+    def set_items() -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def get_enemies():
+    def set_enemies() -> None:
         raise NotImplementedError
     
     @abstractmethod
-    def get_bosses():
+    def set_time() -> None:
         raise NotImplementedError
+
+    @abstractmethod
+    def reset() -> None:
+        raise NotImplementedError
+    

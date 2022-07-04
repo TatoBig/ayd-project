@@ -1,4 +1,8 @@
 import pygame
+# from game_object import Bullet, Player
+# from game_object.enemy import Enemy, Crazy
+# from game_object.item import Item
+import random
 from .game_object import Bullet, Player
 from .game_object.enemy import Enemy, Crazy, EnemyFactory, HardEnemyFactory, NormalEnemyFactory
 from .game_object.item import Item
@@ -27,13 +31,16 @@ class Game:
         self.__screen_enemies.append(self.__enemy_factory.create_crazy(600, 200, player))
         self.__screen_enemies.append(self.__enemy_factory.create_boss(70, 500, player))
 
+        myFont = pygame.font.Font(None, 30)
+        myRound = myFont.render("1", 0, (200,60,80))
+        round_type = random.randint(0, 1)
         run: bool = True
         while run:
             pygame.time.delay(5)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-
+            
             keys = pygame.key.get_pressed()
 
             if keys[pygame.K_UP] and player.y > 0:
@@ -58,6 +65,7 @@ class Game:
 
             self.__screen.blit(player.image, (player.x, player.y))
             player.draw_cooldown(self.__screen)
+            self.__screen.blit(myRound,(100,100))
 
             if len(self.__screen_items) > 0:
                 for item in self.__screen_items:
