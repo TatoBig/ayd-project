@@ -13,15 +13,13 @@ class Wave(CharacterDecorator):
         self.__special_shots: int = 0
 
     def try_shoot(self, direction: str, player: GameObject) -> Optional[Bullet]:
-        if self.current_counter >= self.cooldown:
-            self.current_counter = 0
+        bullet = super().try_shoot(direction, player)
+        if bullet is not None:
             self.__shots += 1
-
             if self.__shots == 3:
                 self.__shots = 0
                 self.__special_shots = 5
-
-            return self.shoot(direction, player)
+            return bullet
 
         if self.__special_shots > 0:
             self.__special_shots -= 1
@@ -33,14 +31,5 @@ class Wave(CharacterDecorator):
                 return self.shoot('down', player)
             if self.__special_shots == 1:
                 return self.shoot('left', player)
-
-    def shoot(self, direction: str, player: GameObject) -> Bullet:
-        bullet = Bullet(player.x, player.y, direction, self.bullet_speed, self.bullet_damage)
-        return bullet
-
-    def _cooldown_loop(self):
-        while True:
-            sleep(0.05)
-            self.current_counter += 1
 
 

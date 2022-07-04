@@ -9,9 +9,9 @@ from ..bullet import Bullet
 
 class Robot(Character):
     def __init__(self):
-        self.__cooldown: int = 0
+        self.__cooldown: int = 1
         self.__current_counter: int = 0
-        self.__bullet_speed: int = 5
+        self.__bullet_speed: int = 3
         self.__bullet_damage: float = 0.02
 
         cooldown_loop = Thread(target=self._cooldown_loop)
@@ -60,6 +60,7 @@ class Robot(Character):
 
     def _cooldown_loop(self):
         while True:
-            sleep(0.05)
-            self.__current_counter += 1
+            sleep(0.01)
+            if self.__current_counter < self.__cooldown:
+                self.__current_counter += 1
 

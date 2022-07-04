@@ -1,6 +1,6 @@
-from typing import Union, Optional
-
 import pygame
+
+from typing import Union, Optional
 from pygame.rect import Rect, RectType
 from pygame.surface import Surface, SurfaceType
 

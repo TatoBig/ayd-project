@@ -45,17 +45,13 @@ class CharacterDecorator(Character):
         self.__decorated_character.bullet_speed = bullet_speed
 
     def try_shoot(self, direction: str, player: GameObject) -> Optional[Bullet]:
-        if self.__decorated_character.current_counter >= self.__decorated_character.cooldown:
-            self.__decorated_character.current_counter = 0
-            return self.shoot(direction, player)
+        return self.__decorated_character.try_shoot(direction, player)
 
     def shoot(self, direction: str, player: GameObject) -> Bullet:
-        bullet = Bullet(player.x, player.y, direction, self.__decorated_character.bullet_speed,
-                        self.__decorated_character.bullet_damage)
-        return bullet
+        return self.__decorated_character.shoot(direction, player)
 
     def _cooldown_loop(self):
         while True:
-            sleep(0.05)
+            sleep(0.01)
             self.__decorated_character.current_counter += 1
 

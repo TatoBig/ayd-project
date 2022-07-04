@@ -17,7 +17,7 @@ class Game:
 
     def init_game(self):
         player = Player(400, 300)
-        item = Item(100, 100)
+        item = Item(250, 250)
         direction = 'down'
         enemy = Enemy(100, 100, 20, player, 20)
         enemy2 = Crazy(500, 550, 40, player, 80)
@@ -50,18 +50,19 @@ class Game:
                 bullet = player.shoot(direction)
                 if bullet is not None:
                     self.__screen_bullets.append(bullet)
-                # bullets.append()
 
             black = 0, 0, 0
             self.__screen.fill(black)
 
             self.__screen.blit(player.image, (player.x, player.y))
+            player.draw_cooldown(self.__screen)
 
             if len(self.__screen_items) > 0:
                 for item in self.__screen_items:
                     self.__screen.blit(item.image, (item.x, item.y))
-                    if player.x + player.hitbox.width >= item.x + 55 + item.hitbox.centerx >= player.x and \
-                            player.y + player.hitbox.height >= item.y + 55 + item.hitbox.centery >= player.y:
+                    if item.x + item.hitbox.width >= player.x >= item.x - player.hitbox.width and \
+                            item.y + item.hitbox.height >= player.y >= item.y - player.hitbox.height:
+                        player.add_item(item)
                         player.upgrade_character(item)
                         self.__screen_items.remove(item)
 
@@ -79,15 +80,20 @@ class Game:
             if len(self.__screen_bullets) > 0:
                 for bullet in self.__screen_bullets:
                     bullet.shoot()
-                    self.__screen.blit(bullet.image, (bullet.x + player.hitbox.centerx, bullet.y + player.hitbox.centery))
-                    if bullet.y < -player.hitbox.bottom or bullet.y > self.__height or bullet.x < -player.hitbox.right or\
+                    self.__screen.blit(bullet.image, (bullet.x + player.hitbox.centerx, bullet.y +
+                                                      player.hitbox.centery))
+                    if bullet.y < -player.hitbox.bottom or \
+                            bullet.y > self.__height or \
+                            bullet.x < -player.hitbox.right or\
                             bullet.x > self.__width:
                         self.__screen_bullets.remove(bullet)
 
                     for enemy in self.__screen_enemies:
                         # 50?
-                        if enemy.x + enemy.hitbox.width >= bullet.x + 55 + bullet.hitbox.centerx >= enemy.x and\
-                                enemy.y + enemy.hitbox.height >= bullet.y + 55 + bullet.hitbox.centery >= enemy.y:
+                        if enemy.x + enemy.hitbox.width >= bullet.x + 55 + bullet.hitbox.centerx \
+                                >= enemy.x and\
+                                enemy.y + enemy.hitbox.height >= bullet.y + 55 + bullet.hitbox.centery \
+                                >= enemy.y:
                             self.__screen_bullets.remove(bullet)
                             enemy.hit(bullet.damage)
 

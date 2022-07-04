@@ -7,12 +7,13 @@ from .character import Character
 from ..bullet import Bullet
 
 
-class Sniper(Character):
+class Fish(Character):
     def __init__(self):
         self.__cooldown: int = 40
         self.__current_counter: int = 0
-        self.__bullet_speed: int = 5
-        self.__bullet_damage: float = 5
+        self.__bullet_speed: int = 3
+        self.__bullet_damage: float = 1
+        self.__shotgun: int = 0
 
         cooldown_loop = Thread(target=self._cooldown_loop)
         cooldown_loop.start()
@@ -51,11 +52,14 @@ class Sniper(Character):
 
     def try_shoot(self, direction: str, player: GameObject) -> Optional[Bullet]:
         if self.__current_counter >= self.__cooldown:
+            self.__shotgun = 10
+        if self.__shotgun > 0:
             self.__current_counter = 0
+            self.__shotgun -= 1
             return self.shoot(direction, player)
 
     def shoot(self, direction: str, player: GameObject) -> Bullet:
-        bullet = Bullet(player.x, player.y, direction, self.__bullet_speed, self.__bullet_damage)
+        bullet = Bullet(player.x, player.y, direction, self.__bullet_speed, self.__bullet_damage, spread=True)
         return bullet
 
     def _cooldown_loop(self):

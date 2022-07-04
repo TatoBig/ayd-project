@@ -1,5 +1,5 @@
 from .. import GameObject
-from ..character import DamageDecorator, Character, Wave
+from ..character import DamageDecorator, Character, Wave, Double
 
 
 class Item(GameObject):
@@ -7,6 +7,5 @@ class Item(GameObject):
         super().__init__(x, y, 'item.png')
 
     def activate(self, current_character: Character) -> Character:
-        print('Decorado')
-        return Wave(current_character)
+        return Double(current_character)
 
