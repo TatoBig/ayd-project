@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 import pygame
 import random
@@ -210,6 +209,9 @@ class Game:
                 self.__round_timer = 0
                 self.__new_round = True
 
+        if self.__round_counter > 31:
+            pygame.quit()
+
     def handle_items(self):
         if len(self.__screen_items) > 0:
             for player in self.__screen_players:
@@ -233,7 +235,7 @@ class Game:
                             try:
                                 self.__screen_enemies.remove(enemy)
                             except:
-                                logging.WARNING(f"error deleting enemy, maybe theres no enemy anymore :)")
+                                print('Catch')
 
                         if not enemy.tracking:
                             enemy.track()
@@ -257,7 +259,7 @@ class Game:
                         try:
                             self.__screen_bullets.remove(bullet)
                         except:
-                            logging.WARNING(f"error deleting bullet, maybe theres no bullet anymore :)")
+                            print('Catch')
 
                     for enemy in self.__screen_enemies:
                         # 50?
