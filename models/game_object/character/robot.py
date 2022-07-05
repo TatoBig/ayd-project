@@ -12,7 +12,7 @@ class Robot(Character):
         self.__cooldown: int = 1
         self.__current_counter: int = 0
         self.__bullet_speed: int = 3
-        self.__bullet_damage: float = 0.02
+        self.__bullet_damage: float = 0.06
 
         cooldown_loop = Thread(target=self._cooldown_loop)
         cooldown_loop.start()

@@ -1,5 +1,5 @@
 from ..store import Store
-from random import random, randint
+from random import randint
 
 
 class Utilities:
@@ -20,5 +20,11 @@ class Utilities:
         else:
             rand_x = self.__store.get_width()
             rand_y = randint(0, self.__store.get_height())
+
+        return [rand_x, rand_y]
+
+    def random_location(self):
+        rand_x = randint(15, self.__store.get_width())
+        rand_y = randint(15, self.__store.get_height())
 
         return [rand_x, rand_y]
