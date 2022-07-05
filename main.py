@@ -31,7 +31,7 @@ class Main:
         # Musica
         pygame.mixer.music.load("PokemonStadium.wav")
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.0)
+        pygame.mixer.music.set_volume(0.1)
         # Juego
         self.activate = False
         self.activate_game = False
