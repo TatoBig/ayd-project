@@ -1,4 +1,4 @@
-import pygame.font
+import pygame
 
 
 class PlayerMenu:
@@ -23,11 +23,14 @@ class PlayerMenu:
 
     def prepare_mode(self):
         """Renderizado del texto"""
-        self.button_player = pygame.Rect(900 / 4 - 50, 500 / 2 - 40, self.button_width, self.button_height)
-        self.button_player_two = pygame.Rect(900 / 4 - 50, 500 / 2 - 40, self.button_width, self.button_height)
+        self.button_player = pygame.Rect(900 / 2 - 50, 500 / 2 - 40, self.button_width, self.button_height)
+        self.button_player_two = pygame.Rect(900 / 2 - 50, 500 / 2 + 20, self.button_width, self.button_height)
+        
         self.text_player = self.font.render("1 Jugador", True, self.text_color, self.button_color)
-        self.text_player = self.text_player.get_rect()
+        self.text_player_rectangle = self.text_player.get_rect()
+        #self.text_player_rectangle = self.text_player.center
         self.text_player_rectangle.center = self.button_player.center
+        
         self.text_player_two = self.font.render("2 Jugadores", True, self.text_color, self.button_color)
         self.text_player_rectangle_two = self.text_player_two.get_rect()
         self.text_player_rectangle_two.center = self.button_player_two.center
