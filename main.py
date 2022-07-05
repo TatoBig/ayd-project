@@ -7,7 +7,7 @@ from models.menu.credits import Credits
 from models.menu.player_menu import PlayerMenu
 from models.menu.player_menu_1 import PlayerMenu1
 from models.menu.player_menu_2 import PlayerMenu2
-
+from models.menu.dificult_menu import  DificultMenu
 
 class Main:
     """Clase menu"""
@@ -36,11 +36,13 @@ class Main:
         self.activate_credits = False
         self.activate_player1 = False
         self.activate_player2 = False
+        self.activate_dif = False
         self.buttons = Button(self)
         self.credit = Credits(self)
         self.playerMenu = PlayerMenu(self)
         self.playerMenu1 = PlayerMenu1(self)
         self.playerMenu2 = PlayerMenu2(self)
+        self.dificultMenu = DificultMenu(self)
         # self.player = Player(self)
         self.clock = pygame.time.Clock()
         # Objetos que me pide
@@ -49,6 +51,7 @@ class Main:
         self.use_check_button = True
         self.use_check_button_player = False
         self.use_check_button_election = False
+        self.use_check_button_dificult = False
 
     def check_button(self, mouse):
 
@@ -87,12 +90,30 @@ class Main:
 
         """Comprobamos el clic"""
         if 400 <= mouse[0] <= 500 and 210 <= mouse[1] <= 310:
+            self.activate_dif = True
+            self.use_check_button_election = False
+            self.use_check_button_dificult = True
             print("fish")
             #self.__game.init_game()
         if 400 <= mouse[0] <= 500 and 270 <= mouse[1] <= 350:
+            self.activate_dif = True
             print("bobot")
         if 400 <= mouse[0] <= 500 and 330 <= mouse[1] <= 410:
+            self.activate_dif = True
             print("sniper")
+    
+    def check_button_dificult(self, mouse):
+
+        """Comprobamos el clic"""
+        if 400 <= mouse[0] <= 500 and 210 <= mouse[1] <= 310:
+            self.use_check_button_player = False
+            self.use_check_button_election = True
+            print("Facil")
+            
+        if 400 <= mouse[0] <= 500 and 270 <= mouse[1] <= 350:
+            self.use_check_button_player = False
+            self.use_check_button_election = True
+            print("Dificil")
 
     def running_game(self):
         """Corre el juego más lectura de eventos"""
@@ -110,10 +131,12 @@ class Main:
                 if ev.type == pygame.MOUSEBUTTONDOWN and self.use_check_button == True and self.use_check_button_player == False:
                     self.check_button(mouse)
                 elif ev.type == pygame.MOUSEBUTTONDOWN and self.use_check_button == False and self.use_check_button_player == True:
-                    print("activado para player")
                     self.check_button_players(mouse)
                 elif ev.type == pygame.MOUSEBUTTONDOWN and self.use_check_button == False and self.use_check_button_player == False and self.use_check_button_election == True:
                     self.check_button_election(mouse)
+                elif ev.type == pygame.MOUSEBUTTONDOWN and self.use_check_button == False and self.use_check_button_player == False and self.use_check_button_election == False and self.use_check_button_dificult == True:
+                    self.check_button_dificult(mouse)
+
 
             self.screen.fill(self.gray)
 
@@ -137,6 +160,9 @@ class Main:
             
             if self.activate_player2:
                 self.playerMenu2.print_button()
+
+            if self.activate_dif:
+                self.dificultMenu.print_button_mode()
 
             
             pygame.display.flip()
