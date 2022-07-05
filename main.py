@@ -114,18 +114,18 @@ class Main:
         """Comprobamos el clic"""
         if 400 <= mouse[0] <= 500 and 210 <= mouse[1] <= 310:
             self.activate_dif = True
-            self.use_check_button_election = False
+            self.use_check_button_election2 = False
             self.use_check_button_dificult = True
             print("fish")
             #self.__game.init_game()
         if 400 <= mouse[0] <= 500 and 270 <= mouse[1] <= 350:
             self.activate_dif = True
-            self.use_check_button_election = False
+            self.use_check_button_election2 = False
             self.use_check_button_dificult = True
             print("bobot")
         if 400 <= mouse[0] <= 500 and 330 <= mouse[1] <= 410:
             self.activate_dif = True
-            self.use_check_button_election = False
+            self.use_check_button_election2 = False
             self.use_check_button_dificult = True
             print("sniper")
     
