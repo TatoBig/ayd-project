@@ -7,6 +7,7 @@ from .game_object.enemy import Enemy
 from .game_object.item import Item
 from .store import Store
 from .Round import Director, NormalRoundBuilder, NormalRound
+from .game_object.character import Fish, Robot, Sniper
 
 
 class Game:
@@ -15,9 +16,12 @@ class Game:
         self.__width: int = 1280
         self.__height: int = 720
 
+        self.__multiplayer: bool = True
+
         self.__screen_bullets: list[Bullet] = []
         self.__screen_enemies: list[Enemy] = []
         self.__screen_items: list[Item] = []
+        self.__screen_players: list[Player] = []
 
         self.__normal_round_builder: NormalRoundBuilder = NormalRoundBuilder()
         self.__round_director: Director = Director(self.__normal_round_builder, 'hard')
@@ -33,10 +37,15 @@ class Game:
         self.__screen = pygame.display.set_mode((self.__width, self.__height))
 
     def init_game(self):
-        player = Player(400, 300)
+        player = Player(400, 300, Fish())
         self.__store.add_player(player)
+        self.__screen_players.append(player)
+        if self.__multiplayer:
+            player2 = Player(200, 100, Sniper())
+            self.__store.add_player(player2)
+            self.__screen_players.append(player2)
+
         item = Item(250, 250)
-        direction = 'down'
 
         self.__screen_items.append(item)
 
@@ -49,28 +58,14 @@ class Game:
 
             keys = pygame.key.get_pressed()
 
-            if keys[pygame.K_UP] and player.y > 0:
-                player.move_up()
-                direction = 'up'
-            if keys[pygame.K_DOWN] and player.y < self.__height - player.hitbox.bottom:
-                player.move_down()
-                direction = 'down'
-            if keys[pygame.K_LEFT] and player.x > 0:
-                player.move_left()
-                direction = 'left'
-            if keys[pygame.K_RIGHT] and player.x < self.__width - player.hitbox.right:
-                player.move_right()
-                direction = 'right'
-            if keys[pygame.K_SPACE]:
-                bullet = player.shoot(direction)
-                if bullet is not None:
-                    self.__screen_bullets.append(bullet)
+            self.player_controls(keys)
 
             black = 0, 0, 0
             self.__screen.fill(black)
 
-            self.__screen.blit(player.image, (player.x, player.y))
-            player.draw_cooldown(self.__screen)
+            for player in self.__screen_players:
+                self.__screen.blit(player.image, (player.x, player.y))
+                player.draw_cooldown(self.__screen)
 
             my_font = pygame.font.Font(None, 30)
             my_round = my_font.render(f'{self.__round_counter}', 0, (200, 60, 80))
@@ -104,30 +99,31 @@ class Game:
 
             # Items
             if len(self.__screen_items) > 0:
-                for item in self.__screen_items:
-                    self.__screen.blit(item.image, (item.x, item.y))
-                    if item.x + item.hitbox.width >= player.x >= item.x - player.hitbox.width and \
-                            item.y + item.hitbox.height >= player.y >= item.y - player.hitbox.height:
-                        player.add_item(item)
-                        player.upgrade_character(item)
-                        self.__screen_items.remove(item)
+                for player in self.__screen_players:
+                    for item in self.__screen_items:
+                        self.__screen.blit(item.image, (item.x, item.y))
+                        if item.x + item.hitbox.width >= player.x >= item.x - player.hitbox.width and \
+                                item.y + item.hitbox.height >= player.y >= item.y - player.hitbox.height:
+                            player.add_item(item)
+                            player.upgrade_character(item)
+                            self.__screen_items.remove(item)
 
             # Enemies
             if len(self.__screen_enemies) > 0:
-                for enemy in self.__screen_enemies:
-                    self.__screen.blit(enemy.image, (enemy.x, enemy.y))
-                    enemy.draw_health_bar(self.__screen)
+                for player in self.__screen_players:
+                    for enemy in self.__screen_enemies:
+                        self.__screen.blit(enemy.image, (enemy.x, enemy.y))
+                        enemy.draw_health_bar(self.__screen)
 
-                    if enemy.current_health <= 0:
-                        self.__screen_enemies.remove(enemy)
+                        if enemy.current_health <= 0:
+                            self.__screen_enemies.remove(enemy)
 
-                    if not enemy.tracking:
-                        enemy.track()
+                        if not enemy.tracking:
+                            enemy.track()
 
-                    if enemy.x + enemy.hitbox.width >= player.x >= enemy.x - player.hitbox.width and \
-                            enemy.y + enemy.hitbox.height >= player.y >= enemy.y - player.hitbox.height:
-                        self.__screen_enemies.remove(enemy)
-                        
+                        if enemy.x + enemy.hitbox.width >= player.x >= enemy.x - player.hitbox.width and \
+                                enemy.y + enemy.hitbox.height >= player.y >= enemy.y - player.hitbox.height:
+                            self.__screen_enemies = []
 
             # Bullets
             if len(self.__screen_bullets) > 0:
@@ -144,9 +140,6 @@ class Game:
                         except:
                             logging.WARNING(f"error deleting bullet, maybe theres no bullet anymore :)")
 
-                            
-                        
-
                     for enemy in self.__screen_enemies:
                         # 50?
                         if enemy.x + enemy.hitbox.width >= bullet.x + 55 + bullet.hitbox.centerx \
@@ -162,3 +155,70 @@ class Game:
             pygame.display.flip()
 
         pygame.quit()
+
+    def player_controls(self, keys):
+        direction = 'down'
+        direction2 = 'down'
+
+        if self.__multiplayer:
+            if keys[pygame.K_UP] and self.__screen_players[0].y > 0:
+                self.__screen_players[0].move_up()
+                direction = 'up'
+            if keys[pygame.K_DOWN] and self.__screen_players[0].y < self.__height - \
+                    self.__screen_players[0].hitbox.bottom:
+                self.__screen_players[0].move_down()
+                direction = 'down'
+            if keys[pygame.K_LEFT] and self.__screen_players[0].x > 0:
+                self.__screen_players[0].move_left()
+                direction = 'left'
+            if keys[pygame.K_RIGHT] and self.__screen_players[0].x < self.__width - \
+                    self.__screen_players[0].hitbox.right:
+                self.__screen_players[0].move_right()
+                direction = 'right'
+            if keys[pygame.K_RETURN]:
+                bullet = self.__screen_players[0].shoot(direction)
+                if bullet is not None:
+                    self.__screen_bullets.append(bullet)
+            if keys[pygame.K_w] and self.__screen_players[1].y > 0:
+                self.__screen_players[1].move_up()
+                direction2 = 'up'
+            if keys[pygame.K_s] and self.__screen_players[1].y < self.__height - \
+                    self.__screen_players[1].hitbox.bottom:
+                self.__screen_players[1].move_down()
+                direction2 = 'down'
+            if keys[pygame.K_a] and self.__screen_players[1].x > 0:
+                self.__screen_players[1].move_left()
+                direction2 = 'left'
+            if keys[pygame.K_d] and self.__screen_players[1].x < self.__width - \
+                    self.__screen_players[1].hitbox.right:
+                self.__screen_players[1].move_right()
+                direction2 = 'right'
+            if keys[pygame.K_SPACE]:
+                bullet = self.__screen_players[1].shoot(direction2)
+                if bullet is not None:
+                    self.__screen_bullets.append(bullet)
+        else:
+            if keys[pygame.K_UP]:
+                bullet = self.__screen_players[0].shoot('up')
+                if bullet is not None:
+                    self.__screen_bullets.append(bullet)
+            if keys[pygame.K_DOWN]:
+                bullet = self.__screen_players[0].shoot('down')
+                if bullet is not None:
+                    self.__screen_bullets.append(bullet)
+            if keys[pygame.K_LEFT]:
+                bullet = self.__screen_players[0].shoot('left')
+                if bullet is not None:
+                    self.__screen_bullets.append(bullet)
+            if keys[pygame.K_RIGHT]:
+                bullet = self.__screen_players[0].shoot('right')
+                if bullet is not None:
+                    self.__screen_bullets.append(bullet)
+            if keys[pygame.K_w] and self.__screen_players[0].y > 0:
+                self.__screen_players[0].move_up()
+            if keys[pygame.K_s] and self.__screen_players[0].y < self.__height - self.__screen_players[0].hitbox.bottom:
+                self.__screen_players[0].move_down()
+            if keys[pygame.K_a] and self.__screen_players[0].x > 0:
+                self.__screen_players[0].move_left()
+            if keys[pygame.K_d] and self.__screen_players[0].x < self.__width - self.__screen_players[0].hitbox.right:
+                self.__screen_players[0].move_right()
