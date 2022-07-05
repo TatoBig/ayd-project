@@ -216,7 +216,7 @@ class Director:
                        self.__factory.create_crazy(), self.__factory.create_normie(), self.__factory.create_boss(),
                        self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy(),
                        self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy(),
-                       self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy()
+                       self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy(),
                        self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy()]
             self.__builder.set_enemies(enemies)
             self.__builder.set_time(2500)
@@ -226,7 +226,7 @@ class Director:
             enemies = [self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_normie(),
                        self.__factory.create_crazy(), self.__factory.create_normie(), self.__factory.create_boss(),
                        self.__factory.create_boss(), self.__factory.create_boss(), self.__factory.create_boss(),
-                       self.__factory.create_boss(), self.__factory.create_crazy(), self.__factory.create_crazy()
+                       self.__factory.create_boss(), self.__factory.create_crazy(), self.__factory.create_crazy(),
                        self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy(),
                        self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy(),
                        self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy(),
