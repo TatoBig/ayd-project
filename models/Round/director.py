@@ -78,4 +78,36 @@ class Director:
             self.__builder.set_enemies(enemies)
             self.__builder.set_time(2500)
             self.__builder.set_items([])
+        if current_round == 11:
+            enemies = [self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_normie(),
+                       self.__factory.create_crazy(), self.__factory.create_normie()]
+            self.__builder.set_enemies(enemies)
+            self.__builder.set_time(2500)
+            self.__builder.set_items([])
+        if current_round == 12:
+            enemies = [self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_normie(),
+                       self.__factory.create_crazy(), self.__factory.create_normie()]
+            self.__builder.set_enemies(enemies)
+            self.__builder.set_time(2500)
+            self.__builder.set_items([])
+        if current_round == 13:
+            enemies = [self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_normie(),
+                       self.__factory.create_crazy(), self.__factory.create_normie(), self.__factory.create_normie()]
+            self.__builder.set_enemies(enemies)
+            self.__builder.set_time(2500)
+            self.__builder.set_items([])
+        if current_round == 14:
+            enemies = [self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_crazy(),
+                       self.__factory.create_crazy(), self.__factory.create_normie(), self.__factory.create_crazy()]
+            self.__builder.set_enemies(enemies)
+            self.__builder.set_time(2500)
+            self.__builder.set_items([])
+        
+        if current_round == 13:
+            enemies = [self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_normie(),
+                       self.__factory.create_crazy(), self.__factory.create_normie(), self.__factory.create_boss()]
+            self.__builder.set_enemies(enemies)
+            self.__builder.set_time(2500)
+            self.__builder.set_items([])
+
     
