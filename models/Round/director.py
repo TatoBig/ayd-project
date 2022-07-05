@@ -103,7 +103,7 @@ class Director:
             self.__builder.set_time(2500)
             self.__builder.set_items([])
         
-        if current_round == 13:
+        if current_round == 15:
             enemies = [self.__factory.create_crazy(), self.__factory.create_crazy(), self.__factory.create_normie(),
                        self.__factory.create_crazy(), self.__factory.create_normie(), self.__factory.create_boss()]
             self.__builder.set_enemies(enemies)
