@@ -100,4 +100,3 @@ class Main:
 if __name__ == "__main__":
     a = Main()
     a.running_game()
-
