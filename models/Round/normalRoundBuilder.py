@@ -3,9 +3,10 @@ from ..game_object.enemy.enemy import Enemy
 from .builder import Builder
 from .NormalRound import NormalRound
 
-class NormalBuilder(Builder):
-    def __init__(self, round: NormalRound):
-        self.__round: NormalRound = round
+
+class NormalRoundBuilder(Builder):
+    def __init__(self):
+        self.__round: NormalRound = NormalRound()
 
     def reset(self) -> None:
         self.__round = NormalRound()
@@ -19,5 +20,5 @@ class NormalBuilder(Builder):
     def set_time(self, time: float) -> None:
         self.__round.time = time
 
-    def get_round(self):
+    def get_result(self) -> NormalRound:
         return self.__round

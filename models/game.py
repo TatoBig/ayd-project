@@ -1,46 +1,52 @@
+from typing import Optional
+
 import pygame
-# from game_object import Bullet, Player
-# from game_object.enemy import Enemy, Crazy
-# from game_object.item import Item
 import random
 from .game_object import Bullet, Player
-from .game_object.enemy import Enemy, Crazy, EnemyFactory, HardEnemyFactory, NormalEnemyFactory
+from .game_object.enemy import Enemy
 from .game_object.item import Item
+from .store import Store
+from .Round import Director, NormalRoundBuilder, NormalRound
 
 
 class Game:
     def __init__(self):
         pygame.init()
+        self.__width: int = 1280
+        self.__height: int = 720
 
         self.__screen_bullets: list[Bullet] = []
         self.__screen_enemies: list[Enemy] = []
         self.__screen_items: list[Item] = []
-        self.__width: int = 800
-        self.__height: int = 600
+
+        self.__normal_round_builder: NormalRoundBuilder = NormalRoundBuilder()
+        self.__round_director: Director = Director(self.__normal_round_builder, 'hard')
+        self.__current_round: Optional[NormalRound] = None
+        self.__round_timer: int = 0
+        self.__round_counter: int = 0
+        self.__new_round: bool = True
+
+        self.__store: Store = Store()
+        self.__store.set_round_counter(self.__round_counter)
+        self.__store.set_size(self.__width, self.__height)
+
         self.__screen = pygame.display.set_mode((self.__width, self.__height))
-        # self.__enemy_factory: EnemyFactory = HardEnemyFactory()
-        self.__enemy_factory: EnemyFactory = NormalEnemyFactory()
 
     def init_game(self):
         player = Player(400, 300)
+        self.__store.add_player(player)
         item = Item(250, 250)
         direction = 'down'
 
         self.__screen_items.append(item)
-        self.__screen_enemies.append(self.__enemy_factory.create_normie(300, 400, player))
-        self.__screen_enemies.append(self.__enemy_factory.create_crazy(600, 200, player))
-        self.__screen_enemies.append(self.__enemy_factory.create_boss(70, 500, player))
 
-        myFont = pygame.font.Font(None, 30)
-        myRound = myFont.render("1", 0, (200,60,80))
-        round_type = random.randint(0, 1)
         run: bool = True
         while run:
             pygame.time.delay(5)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-            
+
             keys = pygame.key.get_pressed()
 
             if keys[pygame.K_UP] and player.y > 0:
@@ -65,8 +71,38 @@ class Game:
 
             self.__screen.blit(player.image, (player.x, player.y))
             player.draw_cooldown(self.__screen)
-            self.__screen.blit(myRound,(100,100))
 
+            my_font = pygame.font.Font(None, 30)
+            my_round = my_font.render(f'{self.__round_counter}', 0, (200, 60, 80))
+            self.__screen.blit(my_round, (100, 100))
+
+            # Rounds
+            if self.__new_round:
+                self.__round_counter += 1
+                self.__round_timer = 0
+                self.__store.set_round_counter(self.__round_counter)
+
+                self.__new_round = False
+                self.__round_director.make_rounds(self.__round_counter)
+                self.__current_round = self.__normal_round_builder.get_result()
+                for enemy in self.__current_round.enemies:
+                    self.__screen_enemies.append(enemy)
+                for items in self.__current_round.items:
+                    self.__screen_items.append(items)
+
+            if len(self.__screen_enemies) == 0:
+                self.__new_round = True
+
+            if self.__current_round is not None:
+                self.__round_timer += 1
+
+                pygame.draw.rect(self.__screen, (255, 255, 255),
+                                 [0, 100 - 25, (self.__round_timer / self.__current_round.time) * self.__width, 4], 0)
+                if self.__round_timer > self.__current_round.time:
+                    self.__round_timer = 0
+                    self.__new_round = True
+
+            # Items
             if len(self.__screen_items) > 0:
                 for item in self.__screen_items:
                     self.__screen.blit(item.image, (item.x, item.y))
@@ -76,6 +112,7 @@ class Game:
                         player.upgrade_character(item)
                         self.__screen_items.remove(item)
 
+            # Enemies
             if len(self.__screen_enemies) > 0:
                 for enemy in self.__screen_enemies:
                     self.__screen.blit(enemy.image, (enemy.x, enemy.y))
@@ -87,6 +124,7 @@ class Game:
                     if not enemy.tracking:
                         enemy.track()
 
+            # Bullets
             if len(self.__screen_bullets) > 0:
                 for bullet in self.__screen_bullets:
                     bullet.shoot()
@@ -94,17 +132,20 @@ class Game:
                                                       player.hitbox.centery))
                     if bullet.y < -player.hitbox.bottom or \
                             bullet.y > self.__height or \
-                            bullet.x < -player.hitbox.right or\
+                            bullet.x < -player.hitbox.right or \
                             bullet.x > self.__width:
                         self.__screen_bullets.remove(bullet)
 
                     for enemy in self.__screen_enemies:
                         # 50?
                         if enemy.x + enemy.hitbox.width >= bullet.x + 55 + bullet.hitbox.centerx \
-                                >= enemy.x and\
+                                >= enemy.x and \
                                 enemy.y + enemy.hitbox.height >= bullet.y + 55 + bullet.hitbox.centery \
                                 >= enemy.y:
-                            self.__screen_bullets.remove(bullet)
+                            try:
+                                self.__screen_bullets.remove(bullet)
+                            except:
+                                print('temp')
                             enemy.hit(bullet.damage)
 
             pygame.display.flip()
