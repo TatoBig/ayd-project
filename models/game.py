@@ -48,6 +48,7 @@ class Game:
         item = Item(250, 250)
 
         self.__screen_items.append(item)
+        self.__screen_items.append(item)
 
         run: bool = True
         while run:
@@ -57,8 +58,6 @@ class Game:
                     run = False
 
             keys = pygame.key.get_pressed()
-
-            self.player_controls(keys)
 
             black = 0, 0, 0
             self.__screen.fill(black)
@@ -71,95 +70,19 @@ class Game:
             my_round = my_font.render(f'{self.__round_counter}', 0, (200, 60, 80))
             self.__screen.blit(my_round, (100, 100))
 
-            # Rounds
-            if self.__new_round:
-                self.__round_counter += 1
-                self.__round_timer = 0
-                self.__store.set_round_counter(self.__round_counter)
-
-                self.__new_round = False
-                self.__round_director.make_rounds(self.__round_counter)
-                self.__current_round = self.__normal_round_builder.get_result()
-                for enemy in self.__current_round.enemies:
-                    self.__screen_enemies.append(enemy)
-                for items in self.__current_round.items:
-                    self.__screen_items.append(items)
-
-            if len(self.__screen_enemies) == 0:
-                self.__new_round = True
-
-            if self.__current_round is not None:
-                self.__round_timer += 1
-
-                pygame.draw.rect(self.__screen, (255, 255, 255),
-                                 [0, 100 - 25, (self.__round_timer / self.__current_round.time) * self.__width, 4], 0)
-                if self.__round_timer > self.__current_round.time:
-                    self.__round_timer = 0
-                    self.__new_round = True
-
-            # Items
-            if len(self.__screen_items) > 0:
-                for player in self.__screen_players:
-                    for item in self.__screen_items:
-                        self.__screen.blit(item.image, (item.x, item.y))
-                        if item.x + item.hitbox.width >= player.x >= item.x - player.hitbox.width and \
-                                item.y + item.hitbox.height >= player.y >= item.y - player.hitbox.height:
-                            player.add_item(item)
-                            player.upgrade_character(item)
-                            self.__screen_items.remove(item)
-
-            # Enemies
-            if len(self.__screen_enemies) > 0:
-                for player in self.__screen_players:
-                    for enemy in self.__screen_enemies:
-                        self.__screen.blit(enemy.image, (enemy.x, enemy.y))
-                        enemy.draw_health_bar(self.__screen)
-
-                        if enemy.current_health <= 0:
-                            self.__screen_enemies.remove(enemy)
-
-                        if not enemy.tracking:
-                            enemy.track()
-
-                        if enemy.x + enemy.hitbox.width >= player.x >= enemy.x - player.hitbox.width and \
-                                enemy.y + enemy.hitbox.height >= player.y >= enemy.y - player.hitbox.height:
-                            self.__screen_enemies = []
-
-            # Bullets
-            if len(self.__screen_bullets) > 0:
-                for bullet in self.__screen_bullets:
-                    bullet.shoot()
-                    self.__screen.blit(bullet.image, (bullet.x + player.hitbox.centerx, bullet.y +
-                                                      player.hitbox.centery))
-                    if bullet.y < -player.hitbox.bottom or \
-                            bullet.y > self.__height or \
-                            bullet.x < -player.hitbox.right or \
-                            bullet.x > self.__width:
-                        try:
-                            self.__screen_bullets.remove(bullet)
-                        except:
-                            logging.WARNING(f"error deleting bullet, maybe theres no bullet anymore :)")
-
-                    for enemy in self.__screen_enemies:
-                        # 50?
-                        if enemy.x + enemy.hitbox.width >= bullet.x + 55 + bullet.hitbox.centerx \
-                                >= enemy.x and \
-                                enemy.y + enemy.hitbox.height >= bullet.y + 55 + bullet.hitbox.centery \
-                                >= enemy.y:
-                            try:
-                                self.__screen_bullets.remove(bullet)
-                            except:
-                                print('temp')
-                            enemy.hit(bullet.damage)
+            self.handle_controls(keys)
+            self.handle_rounds()
+            self.handle_items()
+            self.handle_enemies()
+            self.handle_bullets()
 
             pygame.display.flip()
 
         pygame.quit()
 
-    def player_controls(self, keys):
-        direction = 'down'
-        direction2 = 'down'
-
+    def handle_controls(self, keys):
+        direction: Optional[str] = None
+        direction2: Optional[str] = None
         if self.__multiplayer:
             if keys[pygame.K_UP] and self.__screen_players[0].y > 0:
                 self.__screen_players[0].move_up()
@@ -176,6 +99,8 @@ class Game:
                 self.__screen_players[0].move_right()
                 direction = 'right'
             if keys[pygame.K_RETURN]:
+                if direction is None:
+                    direction = 'down'
                 bullet = self.__screen_players[0].shoot(direction)
                 if bullet is not None:
                     self.__screen_bullets.append(bullet)
@@ -194,6 +119,8 @@ class Game:
                 self.__screen_players[1].move_right()
                 direction2 = 'right'
             if keys[pygame.K_SPACE]:
+                if direction2 is None:
+                    direction2 = 'down'
                 bullet = self.__screen_players[1].shoot(direction2)
                 if bullet is not None:
                     self.__screen_bullets.append(bullet)
@@ -222,3 +149,85 @@ class Game:
                 self.__screen_players[0].move_left()
             if keys[pygame.K_d] and self.__screen_players[0].x < self.__width - self.__screen_players[0].hitbox.right:
                 self.__screen_players[0].move_right()
+
+    def handle_rounds(self):
+        if self.__new_round:
+            self.__round_counter += 1
+            self.__round_timer = 0
+            self.__store.set_round_counter(self.__round_counter)
+
+            self.__new_round = False
+            self.__round_director.make_rounds(self.__round_counter)
+            self.__current_round = self.__normal_round_builder.get_result()
+            for enemy in self.__current_round.enemies:
+                self.__screen_enemies.append(enemy)
+            for items in self.__current_round.items:
+                self.__screen_items.append(items)
+
+        if len(self.__screen_enemies) == 0:
+            self.__new_round = True
+
+        if self.__current_round is not None:
+            self.__round_timer += 1
+
+            pygame.draw.rect(self.__screen, (255, 255, 255),
+                             [0, 100 - 25, (self.__round_timer / self.__current_round.time) * self.__width, 4], 0)
+            if self.__round_timer > self.__current_round.time:
+                self.__round_timer = 0
+                self.__new_round = True
+
+    def handle_items(self):
+        if len(self.__screen_items) > 0:
+            for player in self.__screen_players:
+                for item in self.__screen_items:
+                    self.__screen.blit(item.image, (item.x, item.y))
+                    if item.x + item.hitbox.width >= player.x >= item.x - player.hitbox.width and \
+                            item.y + item.hitbox.height >= player.y >= item.y - player.hitbox.height:
+                        player.add_item(item)
+                        player.upgrade_character(item)
+                        self.__screen_items.remove(item)
+
+    def handle_enemies(self):
+        if len(self.__screen_enemies) > 0:
+            for player in self.__screen_players:
+                for enemy in self.__screen_enemies:
+                    self.__screen.blit(enemy.image, (enemy.x, enemy.y))
+                    enemy.draw_health_bar(self.__screen)
+
+                    if enemy.current_health <= 0:
+                        self.__screen_enemies.remove(enemy)
+
+                    if not enemy.tracking:
+                        enemy.track()
+
+                    if enemy.x + enemy.hitbox.width >= player.x >= enemy.x - player.hitbox.width and \
+                            enemy.y + enemy.hitbox.height >= player.y >= enemy.y - player.hitbox.height:
+                        self.__screen_enemies = []
+
+    def handle_bullets(self):
+        if len(self.__screen_bullets) > 0:
+            for player in self.__screen_players:
+                for bullet in self.__screen_bullets:
+                    bullet.shoot()
+                    self.__screen.blit(bullet.image, (bullet.x + player.hitbox.centerx, bullet.y +
+                                                      player.hitbox.centery))
+                    if bullet.y < -player.hitbox.bottom or \
+                            bullet.y > self.__height or \
+                            bullet.x < -player.hitbox.right or \
+                            bullet.x > self.__width:
+                        try:
+                            self.__screen_bullets.remove(bullet)
+                        except:
+                            logging.WARNING(f"error deleting bullet, maybe theres no bullet anymore :)")
+
+                    for enemy in self.__screen_enemies:
+                        # 50?
+                        if enemy.x + enemy.hitbox.width >= bullet.x + 55 + bullet.hitbox.centerx \
+                                >= enemy.x and \
+                                enemy.y + enemy.hitbox.height >= bullet.y + 55 + bullet.hitbox.centery \
+                                >= enemy.y:
+                            try:
+                                self.__screen_bullets.remove(bullet)
+                            except:
+                                print('temp')
+                            enemy.hit(bullet.damage)

@@ -1,7 +1,7 @@
 import pygame.font
 
 
-class Player:
+class PlayerMenu:
     """Clase para elegir número de jugadores"""
 
     def __init__(self, a_game):

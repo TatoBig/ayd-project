@@ -1,25 +1,22 @@
-# from models import Game
-
-# game = Game()
-# game.init_game()
-
+from models import Game
 import pygame
 import sys
 import random
 from button import Button
-from credits import Credits
-from player import Player
+from models.menu.credits import Credits
 
 
 class Main:
     """Clase menu"""
 
     def __init__(self):
+        self.__game = Game()
+
         """Valores de pantalla"""
         self.playbutton = None
         pygame.init()
-        self.width = 900
-        self.height = 500
+        self.width = 1280
+        self.height = 720
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.screen_width = self.screen.get_rect().width
         self.screen_height = self.screen.get_rect().height
@@ -46,7 +43,7 @@ class Main:
 
         """Comprobamos el clic"""
         if 400 <= mouse[0] <= 500 and 210 <= mouse[1] <= 310:
-            print("start")
+            self.__game.init_game()
             self.activate_game = True
         if 400 <= mouse[0] <= 500 and 270 <= mouse[1] <= 350:
             print("creditos")
@@ -71,8 +68,6 @@ class Main:
                 if ev.type == pygame.MOUSEBUTTONDOWN:
                     self.check_button(mouse)
 
-            
-
             self.screen.fill(self.gray)
 
             if not self.activate_game:
@@ -90,11 +85,9 @@ class Main:
 
             if self.activate_credits:
                 self.credit.print_button_credits()
-                
 
             pygame.display.flip()
             self.clock.tick(60)
-
 
 
 if __name__ == "__main__":
