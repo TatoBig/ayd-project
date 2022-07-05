@@ -15,8 +15,8 @@ class PlayerMenu1:
         self.text_tittle_rectangle = None
         self.screen = a_game.screen
         self.screen_rect = self.screen.get_rect()
-        self.button_width = 100
-        self.button_height = 80
+        self.button_width = 200
+        self.button_height = 50
         self.button_color = (230, 230, 230)
         self.text_color = (0, 0, 0)
         self.font = pygame.font.SysFont(None, 48)
@@ -29,10 +29,10 @@ class PlayerMenu1:
 
     def prepare_text(self):
         """Renderizamos el texto"""
-        self.button_rectangle_start = pygame.Rect(900 / 2 - 50, 500 / 2 - 40, self.button_width, self.button_height)
-        self.button_rectangle_credits = pygame.Rect(900 / 2 - 50, 500 / 2 + 20, self.button_width, self.button_height)
-        self.button_rectangle_out = pygame.Rect(900 / 2 - 50, 500 / 2 + 80, self.button_width, self.button_height)
-        self.tittle = pygame.Rect(900 / 2 - 200, 20, 400, 200)
+        self.button_rectangle_start = pygame.Rect(1280 / 2 - 100, 720 / 2 - 40, self.button_width, self.button_height)
+        self.button_rectangle_credits = pygame.Rect(1280 / 2 - 100, 720 / 2 + 20, self.button_width, self.button_height)
+        self.button_rectangle_out = pygame.Rect(1280 / 2 - 100, 720 / 2 + 80, self.button_width, self.button_height)
+        self.tittle = pygame.Rect(1280 / 2 - 200, 20, 400, 200)
         self.text_image = self.font.render("Fish", True, self.text_color, self.button_color)
         self.text_image_rectangle = self.text_image.get_rect()
         self.text_image_rectangle.center = self.button_rectangle_start.center

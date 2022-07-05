@@ -4,7 +4,6 @@ import pygame
 class Credits:
     """Pantalla de creditos"""
     def __init__(self, a_game):
-        pygame.display.set_caption("Creditos")
         self.text_user = None
         self.text_user_rectangle = None
         self.text_user_two = None
@@ -15,8 +14,8 @@ class Credits:
         self.text_user_rectangle_four = None
         self.screen = a_game.screen
         self.screen_rect = self.screen.get_rect()
-        self.button_width = 100
-        self.button_height = 80
+        self.button_width = 200
+        self.button_height = 50
         self.button_color = (230, 230, 230)
         self.text_color = (0, 0, 0)
         self.font = pygame.font.SysFont(None, 48)

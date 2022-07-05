@@ -14,8 +14,8 @@ class DificultMenu:
         pygame.display.set_caption("Modo de juego")
         self.screen = a_game.screen
         self.screen_rect = self.screen.get_rect()
-        self.button_width = 100
-        self.button_height = 80
+        self.button_width = 200
+        self.button_height = 50
         self.button_color = (230, 230, 230)
         self.text_color = (0, 0, 0)
         self.font = pygame.font.SysFont(None, 48)
@@ -23,12 +23,11 @@ class DificultMenu:
 
     def prepare_mode(self):
         """Renderizado del texto"""
-        self.button_player = pygame.Rect(900 / 2 - 50, 500 / 2 - 40, self.button_width, self.button_height)
-        self.button_player_two = pygame.Rect(900 / 2 - 50, 500 / 2 + 20, self.button_width, self.button_height)
+        self.button_player = pygame.Rect(1280 / 2 - 100, 720 / 2 - 50, self.button_width, self.button_height)
+        self.button_player_two = pygame.Rect(1280 / 2 - 100, 720 / 2 + 80, self.button_width, self.button_height)
         
         self.text_player = self.font.render("Facil", True, self.text_color, self.button_color)
         self.text_player_rectangle = self.text_player.get_rect()
-        #self.text_player_rectangle = self.text_player.center
         self.text_player_rectangle.center = self.button_player.center
         
         self.text_player_two = self.font.render("Dificil", True, self.text_color, self.button_color)
