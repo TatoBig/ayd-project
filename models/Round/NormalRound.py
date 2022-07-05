@@ -1,7 +1,4 @@
-from typing import Optional
-
 from ..game_object.item.item import Item
-
 from ..game_object.enemy.enemy import Enemy
 
 

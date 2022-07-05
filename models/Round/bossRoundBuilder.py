@@ -3,9 +3,10 @@ from ..game_object.enemy.enemy import Enemy
 from .builder import Builder
 from .BossRound import BossRound
 
-class RoundBuilder2(Builder):
-    def __init__(self, round: BossRound):
-        self.__round: BossRound = round
+
+class BossRoundBuilder(Builder):
+    def __init__(self):
+        self.__round: BossRound = BossRound()
 
     def reset(self) -> None:
         self.__round = BossRound()
@@ -19,5 +20,5 @@ class RoundBuilder2(Builder):
     def set_time(self, time: float) -> None:
         self.__round.time = time
 
-    def get_result(self):
+    def get_result(self) -> BossRound:
         return self.__round

@@ -9,8 +9,9 @@ from .item import Item
 class Player(GameObject):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, 'intro_ball.gif')
-        self.__character: Character = Fish()
+        self.__character: Character = Sniper()
         self.__items: list[Item] = []
+        self.__health: int = 3
 
     @property
     def character(self):
