@@ -1,5 +1,5 @@
+import logging
 from typing import Optional
-
 import pygame
 import random
 from .game_object import Bullet, Player
@@ -124,6 +124,11 @@ class Game:
                     if not enemy.tracking:
                         enemy.track()
 
+                    if enemy.x + enemy.hitbox.width >= player.x >= enemy.x - player.hitbox.width and \
+                            enemy.y + enemy.hitbox.height >= player.y >= enemy.y - player.hitbox.height:
+                        self.__screen_enemies.remove(enemy)
+                        
+
             # Bullets
             if len(self.__screen_bullets) > 0:
                 for bullet in self.__screen_bullets:
@@ -134,7 +139,13 @@ class Game:
                             bullet.y > self.__height or \
                             bullet.x < -player.hitbox.right or \
                             bullet.x > self.__width:
-                        self.__screen_bullets.remove(bullet)
+                        try:
+                            self.__screen_bullets.remove(bullet)
+                        except:
+                            logging.WARNING(f"error deleting bullet, maybe theres no bullet anymore :)")
+
+                            
+                        
 
                     for enemy in self.__screen_enemies:
                         # 50?
