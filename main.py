@@ -158,7 +158,7 @@ class Main:
         if 400 <= mouse[0] <= 500 and 270 <= mouse[1] <= 350:
             self.__game.set_difficulty('hard')
             self.__game.init_game()
-wwwwwwwwww
+
     def running_game(self):
         """Corre el juego más lectura de eventos"""
         coord_list = []
