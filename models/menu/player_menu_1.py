@@ -45,6 +45,7 @@ class PlayerMenu1:
         self.text_tittle = self.font_tittle.render("Jugador 1 - Eleccion de personaje", True, self.text_color, self.button_color)
         self.text_tittle_rectangle = self.text_tittle.get_rect()
         self.text_tittle_rectangle.center = self.tittle.center
+        
 
     def print_button(self):
         """Hacemos visibles los botones"""
