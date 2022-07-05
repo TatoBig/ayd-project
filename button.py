@@ -56,3 +56,12 @@ class Button:
         self.screen.blit(self.text_image_three, self.text_image_rectangle_three)
         self.screen.fill(self.button_color, self.tittle)
         self.screen.blit(self.text_tittle, self.text_tittle_rectangle)
+
+    def get_button_start(self):
+        return self.button_rectangle_start
+
+    def get_button_credits(self):
+        return self.button_rectangle_credits
+
+    def get_button_quit(self):
+        return self.button_rectangle_out
